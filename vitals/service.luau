@@ -32,6 +32,7 @@ local state = {
   category_labels = {},
   category_glyphs = {},
   groups = {},
+  group_width_chars = {},
   sensors = {},
   byCategory = {},
   last_update = "",
@@ -43,6 +44,7 @@ local COLORS = {
 }
 
 local formatter = fmtLib.new({})
+local widthCache = {}
 local publicIp = ""
 local lastPublicIpFetchMs = 0
 local publicIpBusy = false
@@ -72,6 +74,7 @@ local function readConfig()
     storage_decimal = config.storageDecimal,
     higher_precision = config.higherPrecision,
   })
+  widthCache = {}
   noctalia.setUpdateInterval(config.updateInterval)
 end
 
@@ -109,6 +112,70 @@ local function sensorColor(formatType, value)
   return nil
 end
 
+-- Deterministic maximum rendered width (in monospace characters) for a sensor
+-- format, given the current formatter settings. The bar's "Fixed width" option
+-- reserves this many characters per metric so values never shift the layout.
+-- Scaled formats sweep their unit orders up to a realistic cap and take the
+-- widest formatted string.
+local function maxTextWidth(formatType)
+  local cached = widthCache[formatType]
+  if cached ~= nil then
+    return cached
+  end
+  local function fmt(value)
+    return #formatter(value, formatType)
+  end
+  local function sweep(base, maxInput, multiplier, samples)
+    local max = 0
+    for _, m in ipairs(samples or { 999.95, 0.5, 1 }) do
+      local e = 0
+      while true do
+        local input = m * math.pow(base, e) / multiplier
+        if input > maxInput then
+          break
+        end
+        max = math.max(max, fmt(math.max(input, 1e-9)))
+        e = e + 1
+      end
+    end
+    return math.max(max, fmt(maxInput))
+  end
+  local width
+  if formatType == "percent" then
+    width = fmt(1)
+  elseif formatType == "temp" then
+    width = math.max(fmt(200000), fmt(-40000))
+  elseif formatType == "fan" then
+    width = fmt(99999)
+  elseif formatType == "in" then
+    width = math.max(fmt(24000), fmt(-24000))
+  elseif formatType == "uptime" then
+    width = fmt(86399000)
+  elseif formatType == "runtime" then
+    width = fmt(3596400)
+  elseif formatType == "load" then
+    width = fmt(4096)
+  elseif formatType == "watt" or formatType == "watt-hour" then
+    width = fmt(1e9)
+  elseif formatType == "string" then
+    width = 15
+  elseif formatType == "hertz" then
+    width = sweep(1000, 2e10, 1)
+  elseif formatType == "memory" then
+    local u = config.memoryDecimal and 1000 or 1024
+    width = sweep(u, 3e9, u)
+  elseif formatType == "storage" then
+    local u = config.storageDecimal and 1000 or 1024
+    width = sweep(u, 2e13, 1)
+  elseif formatType == "speed" then
+    width = sweep(1000, 1.25e10, 1)
+  else
+    width = #formatter(0, formatType)
+  end
+  widthCache[formatType] = width
+  return width
+end
+
 local function addSensor(key, label, value, formatType)
   if value == nil then
     return
@@ -124,13 +191,15 @@ local function addSensor(key, label, value, formatType)
     value = value,
     format = formatType,
     color = sensorColor(formatType, value),
+    width_chars = maxTextWidth(formatType),
   }
   table.insert(state.byCategory[currentCategory], key)
 end
 
-local function groupFor(category, text, color)
+local function groupFor(category, text, color, width)
   if text ~= nil then
     state.groups[category] = { text = text, color = color }
+    state.group_width_chars[category] = width or #text
   end
 end
 
@@ -154,6 +223,7 @@ local function build(raw)
   state.category_labels = {}
   state.category_glyphs = {}
   state.groups = {}
+  state.group_width_chars = {}
   state.sensors = {}
   state.byCategory = {}
   currentCategory = nil
@@ -184,7 +254,7 @@ local function build(raw)
     end
     addSensor("cpu_core_" .. num, noctalia.tr("labels.cpu_core", { index = num }), usage, "percent")
   end
-  groupFor("cpu", cpuUsage ~= nil and formatter(cpuUsage, "percent") or nil, sensorColor("percent", cpuUsage))
+  groupFor("cpu", cpuUsage ~= nil and formatter(cpuUsage, "percent") or nil, sensorColor("percent", cpuUsage), maxTextWidth("percent"))
 
   -- Memory
   pushCategory("memory", "categories.memory", "device-desktop")
@@ -202,7 +272,7 @@ local function build(raw)
     addSensor("mem_swap_used", noctalia.tr("labels.mem_swap_used"), mem.swap_total - mem.swap_free, "memory")
     addSensor("mem_swap_free", noctalia.tr("labels.mem_swap_free"), mem.swap_free, "memory")
   end
-  groupFor("memory", memUsage ~= nil and formatter(memUsage, "percent") or nil, sensorColor("percent", memUsage))
+  groupFor("memory", memUsage ~= nil and formatter(memUsage, "percent") or nil, sensorColor("percent", memUsage), maxTextWidth("percent"))
 
   -- GPU
   if raw.gpu ~= nil then
@@ -211,7 +281,7 @@ local function build(raw)
     addSensor("gpu_temp", noctalia.tr("labels.gpu_temp"), raw.gpu.temp_c ~= nil and raw.gpu.temp_c * 1000 or nil, "temp")
     addSensor("gpu_mem_used", noctalia.tr("labels.gpu_mem_used"), raw.gpu.vram_used, "storage")
     addSensor("gpu_mem_total", noctalia.tr("labels.gpu_mem_total"), raw.gpu.vram_total, "storage")
-    groupFor("gpu", raw.gpu.usage ~= nil and formatter(raw.gpu.usage, "percent") or nil, sensorColor("percent", raw.gpu.usage))
+    groupFor("gpu", raw.gpu.usage ~= nil and formatter(raw.gpu.usage, "percent") or nil, sensorColor("percent", raw.gpu.usage), maxTextWidth("percent"))
   end
 
   -- Hwmon temperatures / voltages / fans
@@ -234,7 +304,7 @@ local function build(raw)
     end
     if count > 0 then
       local avg = sum / count
-      groupFor("temp", formatter(avg, "temp"), sensorColor("temp", avg))
+      groupFor("temp", formatter(avg, "temp"), sensorColor("temp", avg), maxTextWidth("temp"))
     end
   end
   if #raw.hwmon.volt > 0 then
@@ -254,7 +324,7 @@ local function build(raw)
       count = count + 1
     end
     if count > 0 then
-      groupFor("volt", formatter(sum / count, "in"))
+      groupFor("volt", formatter(sum / count, "in"), nil, maxTextWidth("in"))
     end
   end
   if #raw.hwmon.fan > 0 then
@@ -274,7 +344,7 @@ local function build(raw)
       count = count + 1
     end
     if count > 0 then
-      groupFor("fan", formatter(sum / count, "fan"))
+      groupFor("fan", formatter(sum / count, "fan"), nil, maxTextWidth("fan"))
     end
   end
 
@@ -289,9 +359,12 @@ local function build(raw)
     addSensor("pub_ip", noctalia.tr("labels.pub_ip"), publicIp, "string")
   end
   if net.rx ~= nil or net.tx ~= nil then
+    local speedWidth = maxTextWidth("speed")
     groupFor(
       "net",
-      "↓ " .. formatter(net.rx or 0, "speed") .. "  ↑ " .. formatter(net.tx or 0, "speed")
+      "↓ " .. formatter(net.rx or 0, "speed") .. "  ↑ " .. formatter(net.tx or 0, "speed"),
+      nil,
+      2 + speedWidth + 4 + speedWidth
     )
   end
 
@@ -304,7 +377,7 @@ local function build(raw)
   addSensor("disk_used", noctalia.tr("labels.disk_used"), disk.used, "storage")
   addSensor("disk_read_rate", noctalia.tr("labels.disk_read_rate"), disk.read_rate, "speed")
   addSensor("disk_write_rate", noctalia.tr("labels.disk_write_rate"), disk.write_rate, "speed")
-  groupFor("disk", disk.usage ~= nil and formatter(disk.usage, "percent") or nil, sensorColor("percent", disk.usage))
+  groupFor("disk", disk.usage ~= nil and formatter(disk.usage, "percent") or nil, sensorColor("percent", disk.usage), maxTextWidth("percent"))
 
   -- System
   pushCategory("system", "categories.system", "server")
@@ -316,7 +389,7 @@ local function build(raw)
   addSensor("threads_active", noctalia.tr("labels.threads_active"), sys.threads_active, "string")
   addSensor("threads_total", noctalia.tr("labels.threads_total"), sys.threads_total, "string")
   addSensor("open_files", noctalia.tr("labels.open_files"), sys.open_files, "string")
-  groupFor("system", sys.load1 ~= nil and formatter(sys.load1, "load") or nil)
+  groupFor("system", sys.load1 ~= nil and formatter(sys.load1, "load") or nil, nil, maxTextWidth("load"))
 
   -- Battery
   if raw.battery ~= nil then
@@ -337,7 +410,7 @@ local function build(raw)
     if energyNow ~= nil and powerNow ~= nil and powerNow > 0 then
       addSensor("battery_time_left", noctalia.tr("labels.battery_time_left"), energyNow * 3600 / powerNow, "runtime")
     end
-    groupFor("battery", fraction ~= nil and formatter(fraction, "percent") or nil, sensorColor("percent", fraction))
+    groupFor("battery", fraction ~= nil and formatter(fraction, "percent") or nil, sensorColor("percent", fraction), maxTextWidth("percent"))
   end
 
   -- Drop categories that produced no sensors this tick (e.g. battery on a

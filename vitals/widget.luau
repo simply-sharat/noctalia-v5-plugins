@@ -40,7 +40,21 @@ local function hotSensorKeys()
   return hotSensors or {}
 end
 
-local function metricRow(category, text, color)
+-- Pad to a fixed monospace character width (cell width, not byte length, so
+-- multi-byte glyphs like the network arrows count as one cell each).
+local function padTo(text, width)
+  if width == nil or width <= 0 then
+    return text
+  end
+  local len = utf8 ~= nil and utf8.len ~= nil and utf8.len(text) or #text
+  local pad = width - (len or #text)
+  if pad <= 0 then
+    return text
+  end
+  return text .. string.rep(" ", pad)
+end
+
+local function metricRow(category, text, width, color, fixedWidth)
   local row = {}
   if showIcons then
     local glyph = "info"
@@ -50,6 +64,10 @@ local function metricRow(category, text, color)
     row[#row + 1] = ui.glyph({ name = glyph, size = 12, color = "primary" })
   end
   local props = { text = text, fontSize = 11 }
+  if fixedWidth then
+    props.fontFamily = "monospace"
+    props.text = padTo(text, width)
+  end
   if color ~= nil then
     props.color = color
   end
@@ -58,6 +76,7 @@ local function metricRow(category, text, color)
 end
 
 local function render()
+  local fixedWidth = noctalia.getConfig("fixed_width") ~= false
   local container = barWidget.isVertical() and ui.column or ui.row
   local children = {}
 
@@ -73,7 +92,9 @@ local function render()
       children[#children + 1] = metricRow(
         category,
         (sensor ~= nil and sensor.text) or "--",
-        (sensor ~= nil and sensor.color) or nil
+        (sensor ~= nil and sensor.width_chars) or nil,
+        (sensor ~= nil and sensor.color) or nil,
+        fixedWidth
       )
     end
   else
@@ -81,7 +102,13 @@ local function render()
       if noctalia.getConfig(item.setting) then
         local group = (data ~= nil and data.groups[item.category]) or nil
         if group ~= nil then
-          children[#children + 1] = metricRow(item.category, group.text, group.color)
+          children[#children + 1] = metricRow(
+            item.category,
+            group.text,
+            (data ~= nil and data.group_width_chars ~= nil and data.group_width_chars[item.category]) or nil,
+            group.color,
+            fixedWidth
+          )
         end
       end
     end

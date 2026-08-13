@@ -206,6 +206,13 @@ description_key = "settings.show_system.description"
 default = false
 
 [[setting]]
+key = "fixed_width"
+type = "bool"
+label_key = "settings.fixed_width.label"
+description_key = "settings.fixed_width.description"
+default = true
+
+[[setting]]
 key = "hot_sensors"
 type = "string_list"
 label_key = "settings.hot_sensors.label"

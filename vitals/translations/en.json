@@ -64,6 +64,8 @@
   "settings.update_interval.description": "How often to poll the sensors (milliseconds).",
   "settings.hot_sensors.label": "Sensors in the bar",
   "settings.hot_sensors.description": "Optional exact list of sensor keys to show instead of the toggles above. See the plugin README for the full list of keys.",
+  "settings.fixed_width.label": "Fixed width",
+  "settings.fixed_width.description": "Reserve the widest possible width for each reading (monospace) so the bar never shifts as values change. Disable to size each value to its own text.",
   "settings.unit.label": "Temperature unit",
   "settings.unit.description": "Unit used for all temperature readings.",
   "settings.unit.c": "Celsius",

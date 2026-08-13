@@ -48,6 +48,9 @@ toggles with exact sensor keys. The service publishes the following keys under
 - The bar widget shows a category icon in front of each sensor ("Show metric
   icons" setting). CPU, memory, temperature, network, disk, fan, voltage, GPU,
   system and battery each get their own icon.
+- By default each reading in the bar is padded (monospace) to the widest value
+  it can display, so the bar never shifts as readings change. Disable the
+  "Fixed width" setting to let each value size itself.
 - Temperature thresholds in settings are always Celsius, regardless of the
   display unit.
 - Disk rates and usage follow the "Storage mount" setting (default `/`).
