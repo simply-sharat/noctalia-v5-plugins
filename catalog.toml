@@ -46,3 +46,16 @@ description = "Shows when microphone, camera or screen sharing is active, with a
 plugin_api = 23
 tags = ["bar", "privacy", "indicator"]
 dependencies = ["pw-dump"]
+
+[[plugin]]
+id = "simply-sharat/vitals"
+name = "Vitals"
+version = "1.0.0"
+updated_at = 1786628915
+added_at = 1786628915
+author = "simply-sharat"
+license = "MIT"
+icon = "activity"
+description = "CPU, memory, GPU, temperatures, fans, network, disk and battery monitor."
+plugin_api = 23
+tags = ["bar", "system", "monitoring"]

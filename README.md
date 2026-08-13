@@ -19,6 +19,7 @@ Or, for local development, drop the plugin folder under
 | [Air Quality](./air_quality/README.md) | `simply-sharat/air_quality` | service, widget, panel, desktop widget |
 | [Monique](./monique/README.md) | `simply-sharat/monique` | service, widget, panel |
 | [Privacy Indicator](./privacy_indicator/README.md) | `simply-sharat/privacy_indicator` | service, widget, panel |
+| [Vitals](./vitals/README.md) | `simply-sharat/vitals` | service, widget, panel |
 
 ## Layout
 
@@ -27,6 +28,7 @@ catalog.toml       index of every plugin in this repo
 air_quality/       air quality service + bar widget + panel + desktop widget
 monique/           monitor-profile service + bar widget + profile panel
 privacy_indicator/ capture-detection service + bar widget + access-history panel
+vitals/            system monitor service + bar widget + details panel
 ```
 
 Each plugin ships a `plugin.toml`, its entry scripts, a `README.md` and
@@ -34,7 +36,7 @@ Each plugin ships a `plugin.toml`, its entry scripts, a `README.md` and
 
 ## Requirements
 
-- Noctalia v5 (plugin API 23 for all three plugins).
+- Noctalia v5 (plugin API 23 for all plugins).
 - Air Quality: an internet connection. Coordinates are resolved via IP
   (`auto_ip`, the default), custom lat/lon, or the shell's own `[location]`
   config when manual coordinates are set.

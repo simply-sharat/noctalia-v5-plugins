@@ -1,0 +1,255 @@
+# Vitals - system monitor.
+# Shows CPU, memory, GPU, temperatures, voltages, fans, network, disk and
+# battery in the bar and panel. A headless [[service]] reads the kernel
+# sensors and publishes plain data to noctalia.state; the bar widget and panel
+# are thin UI clients of that shared state.
+
+id = "simply-sharat/vitals"
+name = "Vitals"
+version = "1.0.0"
+plugin_api = 23
+author = "simply-sharat"
+license = "MIT"
+dependencies = []
+tags = ["bar", "system", "monitoring"]
+icon = "activity"
+description = "CPU, memory, GPU, temperatures, fans, network, disk and battery monitor."
+
+[[setting]]
+key = "update_interval"
+type = "int"
+label_key = "settings.update_interval.label"
+description_key = "settings.update_interval.description"
+min = 1000
+max = 30000
+default = 2000
+
+[[setting]]
+key = "unit"
+type = "select"
+label_key = "settings.unit.label"
+description_key = "settings.unit.description"
+default = "c"
+options = [
+  { value = "c", label_key = "settings.unit.c" },
+  { value = "f", label_key = "settings.unit.f" },
+]
+
+[[setting]]
+key = "memory_measurement"
+type = "select"
+label_key = "settings.memory_measurement.label"
+description_key = "settings.memory_measurement.description"
+default = "binary"
+options = [
+  { value = "binary", label_key = "settings.memory_measurement.binary" },
+  { value = "decimal", label_key = "settings.memory_measurement.decimal" },
+]
+
+[[setting]]
+key = "storage_measurement"
+type = "select"
+label_key = "settings.storage_measurement.label"
+description_key = "settings.storage_measurement.description"
+default = "binary"
+options = [
+  { value = "binary", label_key = "settings.storage_measurement.binary" },
+  { value = "decimal", label_key = "settings.storage_measurement.decimal" },
+]
+
+[[setting]]
+key = "use_higher_precision"
+type = "bool"
+label_key = "settings.use_higher_precision.label"
+description_key = "settings.use_higher_precision.description"
+default = false
+
+[[setting]]
+key = "hide_zeros"
+type = "bool"
+label_key = "settings.hide_zeros.label"
+description_key = "settings.hide_zeros.description"
+default = true
+
+[[setting]]
+key = "storage_path"
+type = "folder"
+label_key = "settings.storage_path.label"
+description_key = "settings.storage_path.description"
+default = "/"
+
+[[setting]]
+key = "temp_warn"
+type = "int"
+label_key = "settings.temp_warn.label"
+description_key = "settings.temp_warn.description"
+min = 1
+max = 120
+default = 80
+
+[[setting]]
+key = "temp_crit"
+type = "int"
+label_key = "settings.temp_crit.label"
+description_key = "settings.temp_crit.description"
+min = 1
+max = 150
+default = 90
+
+[[setting]]
+key = "percent_warn"
+type = "int"
+label_key = "settings.percent_warn.label"
+description_key = "settings.percent_warn.description"
+min = 1
+max = 100
+default = 80
+
+[[setting]]
+key = "percent_crit"
+type = "int"
+label_key = "settings.percent_crit.label"
+description_key = "settings.percent_crit.description"
+min = 1
+max = 100
+default = 95
+
+[[setting]]
+key = "include_public_ip"
+type = "bool"
+label_key = "settings.include_public_ip.label"
+description_key = "settings.include_public_ip.description"
+default = false
+
+[[setting]]
+key = "public_ip_provider"
+type = "select"
+label_key = "settings.public_ip_provider.label"
+description_key = "settings.public_ip_provider.description"
+default = "ipify"
+options = [
+  { value = "ipify", label_key = "settings.public_ip_provider.ipify" },
+  { value = "myip", label_key = "settings.public_ip_provider.myip" },
+  { value = "corecoding", label_key = "settings.public_ip_provider.corecoding" },
+]
+
+[[setting]]
+key = "public_ip_interval"
+type = "int"
+label_key = "settings.public_ip_interval.label"
+description_key = "settings.public_ip_interval.description"
+min = 1
+max = 1440
+default = 30
+
+[[setting]]
+key = "show_cpu"
+type = "bool"
+label_key = "settings.show_cpu.label"
+description_key = "settings.show_cpu.description"
+default = true
+
+[[setting]]
+key = "show_memory"
+type = "bool"
+label_key = "settings.show_memory.label"
+description_key = "settings.show_memory.description"
+default = true
+
+[[setting]]
+key = "show_gpu"
+type = "bool"
+label_key = "settings.show_gpu.label"
+description_key = "settings.show_gpu.description"
+default = false
+
+[[setting]]
+key = "show_temp"
+type = "bool"
+label_key = "settings.show_temp.label"
+description_key = "settings.show_temp.description"
+default = false
+
+[[setting]]
+key = "show_fan"
+type = "bool"
+label_key = "settings.show_fan.label"
+description_key = "settings.show_fan.description"
+default = false
+
+[[setting]]
+key = "show_net"
+type = "bool"
+label_key = "settings.show_net.label"
+description_key = "settings.show_net.description"
+default = true
+
+[[setting]]
+key = "show_disk"
+type = "bool"
+label_key = "settings.show_disk.label"
+description_key = "settings.show_disk.description"
+default = false
+
+[[setting]]
+key = "show_battery"
+type = "bool"
+label_key = "settings.show_battery.label"
+description_key = "settings.show_battery.description"
+default = false
+
+[[setting]]
+key = "show_system"
+type = "bool"
+label_key = "settings.show_system.label"
+description_key = "settings.show_system.description"
+default = false
+
+[[setting]]
+key = "hot_sensors"
+type = "string_list"
+label_key = "settings.hot_sensors.label"
+description_key = "settings.hot_sensors.description"
+default = []
+advanced = true
+
+[[widget]]
+id = "bar"
+entry = "widget.luau"
+
+  [widget.actions]
+  middle = "none"
+
+  [[widget.setting]]
+  key = "glyph"
+  type = "glyph"
+  label_key = "settings.glyph.label"
+  description_key = "settings.glyph.description"
+  default = "activity"
+
+  [[widget.setting]]
+  key = "show_glyph"
+  type = "bool"
+  label_key = "settings.show_glyph.label"
+  description_key = "settings.show_glyph.description"
+  default = true
+
+  [[widget.setting]]
+  key = "show_icons"
+  type = "bool"
+  label_key = "settings.show_icons.label"
+  description_key = "settings.show_icons.description"
+  default = true
+
+[[panel]]
+id = "panel"
+entry = "panel.luau"
+width = 380
+height = 520
+placement = "attached"
+position = "auto"
+open_near_click = true
+
+[[service]]
+id = "service"
+entry = "service.luau"
