@@ -18,6 +18,7 @@ Or, for local development, drop the plugin folder under
 |---|---|---|
 | [Air Quality](./air_quality/README.md) | `simply-sharat/air_quality` | service, widget, panel, desktop widget |
 | [Monitor Layout](./monitor_layout/README.md) | `simply-sharat/monitor_layout` | service, widget, shortcut, panel |
+| [Privacy Indicator](./privacy_indicator/README.md) | `simply-sharat/privacy_indicator` | service, widget, panel |
 
 ## Layout
 
@@ -25,6 +26,7 @@ Or, for local development, drop the plugin folder under
 catalog.toml       index of every plugin in this repo
 air_quality/       air quality service + bar widget + panel + desktop widget
 monitor_layout/    display arrangement service + bar widget + control-center shortcut + panel
+privacy_indicator/ capture-detection service + bar widget + access-history panel
 ```
 
 Each plugin ships a `plugin.toml`, its entry scripts, a `README.md` and
@@ -32,9 +34,13 @@ Each plugin ships a `plugin.toml`, its entry scripts, a `README.md` and
 
 ## Requirements
 
-- Noctalia v5 (plugin API 26 for Air Quality, 24 for Monitor Layout).
+- Noctalia v5 (plugin API 26 for Air Quality, 24 for Monitor Layout and
+  Privacy Indicator).
 - Air Quality: an internet connection. Coordinates are resolved via IP
   (`auto_ip`, the default), custom lat/lon, or the shell's own `[location]`
   config when manual coordinates are set.
 - Monitor Layout: either Sway (`swaymsg`) or Hyprland (`hyprctl`) with the
   backend auto-detected.
+- Privacy Indicator: PipeWire with `pw-dump` on `PATH` (microphone and
+  screen-sharing detection) and read access to `/dev/video*` (camera
+  detection).
