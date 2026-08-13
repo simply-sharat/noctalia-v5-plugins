@@ -17,7 +17,7 @@ Or, for local development, drop the plugin folder under
 | Plugin | id | Entries |
 |---|---|---|
 | [Air Quality](./air_quality/README.md) | `simply-sharat/air_quality` | service, widget, panel, desktop widget |
-| [Monitor Layout](./monitor_layout/README.md) | `simply-sharat/monitor_layout` | service, widget, shortcut, panel |
+| [Monique](./monique/README.md) | `simply-sharat/monique` | service, widget, panel |
 | [Privacy Indicator](./privacy_indicator/README.md) | `simply-sharat/privacy_indicator` | service, widget, panel |
 
 ## Layout
@@ -25,7 +25,7 @@ Or, for local development, drop the plugin folder under
 ```
 catalog.toml       index of every plugin in this repo
 air_quality/       air quality service + bar widget + panel + desktop widget
-monitor_layout/    display arrangement service + bar widget + control-center shortcut + panel
+monique/           monitor-profile service + bar widget + profile panel
 privacy_indicator/ capture-detection service + bar widget + access-history panel
 ```
 

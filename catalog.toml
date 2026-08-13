@@ -20,17 +20,18 @@ plugin_api = 23
 tags = ["weather", "health", "monitoring"]
 
 [[plugin]]
-id = "simply-sharat/monitor_layout"
-name = "Monitor Layout"
-version = "1.1.0"
-updated_at = 1786626226
-added_at = 1786665600
+id = "simply-sharat/monique"
+name = "Monique"
+version = "1.0.0"
+updated_at = 1786627034
+added_at = 1786627034
 author = "simply-sharat"
 license = "MIT"
 icon = "device-desktop"
-description = "Arrange multiple displays and change their resolutions from a Noctalia panel."
+description = "Switch monitor profiles from the bar using Monique."
 plugin_api = 23
-tags = ["display", "system", "utility"]
+tags = ["bar", "display", "system"]
+dependencies = ["monique"]
 
 [[plugin]]
 id = "simply-sharat/privacy_indicator"

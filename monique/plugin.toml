@@ -1,0 +1,58 @@
+# Monique - migrated from the legacy v4 plugin (ToRvaLDz).
+# Switches between saved Monique monitor profiles from the bar. A headless
+# [[service]] watches the active profile and the saved profile list and
+# publishes them to noctalia.state; the bar widget and panel are thin clients.
+
+id = "simply-sharat/monique"
+name = "Monique"
+version = "1.0.0"
+plugin_api = 23
+author = "simply-sharat"
+license = "MIT"
+dependencies = ["monique"]
+tags = ["bar", "display", "system"]
+icon = "device-desktop"
+description = "Switch monitor profiles from the bar using Monique."
+
+[[setting]]
+key = "refresh_interval"
+type = "int"
+label_key = "settings.refresh_interval.label"
+description_key = "settings.refresh_interval.description"
+min = 1000
+max = 30000
+default = 5000
+
+[[setting]]
+key = "active_color"
+type = "color"
+label_key = "settings.active_color.label"
+description_key = "settings.active_color.description"
+default = "primary"
+
+[[setting]]
+key = "show_profile_label"
+type = "bool"
+label_key = "settings.show_profile_label.label"
+description_key = "settings.show_profile_label.description"
+default = false
+
+[[widget]]
+id = "bar"
+entry = "widget.luau"
+
+  [widget.actions]
+  middle = "none"
+
+[[panel]]
+id = "panel"
+entry = "panel.luau"
+width = 320
+height = 420
+placement = "attached"
+position = "auto"
+open_near_click = true
+
+[[service]]
+id = "service"
+entry = "service.luau"
