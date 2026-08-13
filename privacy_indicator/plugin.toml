@@ -6,7 +6,7 @@
 
 id = "simply-sharat/privacy_indicator"
 name = "Privacy Indicator"
-version = "1.0.0"
+version = "1.1.0"
 plugin_api = 23
 author = "simply-sharat"
 license = "MIT"

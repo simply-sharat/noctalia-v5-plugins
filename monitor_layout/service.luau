@@ -1,20 +1,22 @@
 --!nonstrict
 -- Monitor Layout headless [[service]] entry.
 --
--- Owns the output state: reads the current layout from Sway or Hyprland
--- (auto-detected), keeps live + draft copies, and applies the draft as a
--- shell script. Publishes everything to noctalia.state under "layout.data";
+-- Owns the output state: reads the current layout from Sway, Hyprland or
+-- Niri (auto-detected), keeps live + draft copies, and applies the draft as
+-- a shell script. Publishes everything to noctalia.state under "layout.data";
 -- the bar widget, control-center shortcut and panel send commands through the
 -- "layout.cmd" channel ({ action = "refresh" | "apply" | "reset" | "select" |
 -- "set_position" | "set_resolution" | "set_scale", ... }).
 
 local sway = require("./backends/sway.luau")
 local hyprland = require("./backends/hyprland.luau")
+local niri = require("./backends/niri.luau")
 
 local config = {
   backend = "auto",
   swayCommand = "swaymsg",
   hyprctlCommand = "hyprctl",
+  niriCommand = "niri",
   snapToGrid = true,
   gridSize = 40,
 }
@@ -23,6 +25,7 @@ local function readConfig()
   config.backend = noctalia.getConfig("backend") or "auto"
   config.swayCommand = noctalia.getConfig("sway_command") or "swaymsg"
   config.hyprctlCommand = noctalia.getConfig("hyprctl_command") or "hyprctl"
+  config.niriCommand = noctalia.getConfig("niri_command") or "niri"
   config.snapToGrid = noctalia.getConfig("snap_to_grid")
   if config.snapToGrid == nil then
     config.snapToGrid = true
@@ -40,6 +43,9 @@ local function detectBackend()
   if config.backend == "hyprland" then
     return "hyprland"
   end
+  if config.backend == "niri" then
+    return "niri"
+  end
 
   if noctalia.getenv("HYPRLAND_INSTANCE_SIGNATURE") ~= nil
     and noctalia.commandExists(config.hyprctlCommand) then
@@ -48,6 +54,14 @@ local function detectBackend()
   if noctalia.getenv("SWAYSOCK") ~= nil
     and noctalia.commandExists(config.swayCommand) then
     return "sway"
+  end
+  if noctalia.getenv("NIRI_SOCKET") ~= nil
+    and noctalia.commandExists(config.niriCommand) then
+    return "niri"
+  end
+  if noctalia.getenv("XDG_CURRENT_DESKTOP") == "niri"
+    and noctalia.commandExists(config.niriCommand) then
+    return "niri"
   end
   if noctalia.commandExists("hyprctl") then
     return "hyprland"
@@ -77,8 +91,19 @@ local function backendModule()
     return sway
   elseif state.backend == "hyprland" then
     return hyprland
+  elseif state.backend == "niri" then
+    return niri
   end
   return nil
+end
+
+local function backendCommand()
+  if state.backend == "sway" then
+    return config.swayCommand
+  elseif state.backend == "hyprland" then
+    return config.hyprctlCommand
+  end
+  return config.niriCommand
 end
 
 local function buildConfigContent()
@@ -231,7 +256,7 @@ local function refresh()
     return
   end
 
-  local command = state.backend == "sway" and config.swayCommand or config.hyprctlCommand
+  local command = backendCommand()
   local fetchCommand = module.buildFetchCommand(command)
 
   noctalia.runAsync(fetchCommand, function(result)
@@ -280,7 +305,7 @@ local function applyLayout()
     return
   end
 
-  local command = state.backend == "sway" and config.swayCommand or config.hyprctlCommand
+  local command = backendCommand()
   local script, err = module.buildApplyCommand(state.draft_outputs, command)
   if err ~= nil then
     state.error = err

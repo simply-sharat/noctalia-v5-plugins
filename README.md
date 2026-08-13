@@ -38,8 +38,8 @@ Each plugin ships a `plugin.toml`, its entry scripts, a `README.md` and
 - Air Quality: an internet connection. Coordinates are resolved via IP
   (`auto_ip`, the default), custom lat/lon, or the shell's own `[location]`
   config when manual coordinates are set.
-- Monitor Layout: either Sway (`swaymsg`) or Hyprland (`hyprctl`) with the
-  backend auto-detected.
+- Monitor Layout: Sway (`swaymsg`), Hyprland (`hyprctl`), or Niri (`niri`)
+  with the backend auto-detected from the session environment.
 - Privacy Indicator: PipeWire with `pw-dump` on `PATH` (microphone and
   screen-sharing detection) and read access to `/dev/video*` (camera
   detection).

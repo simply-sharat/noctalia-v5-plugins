@@ -1,16 +1,16 @@
 # Monitor Layout - migrated from the legacy v4 plugin (Mathew-D).
 # Arrange multiple displays and change their resolutions from a Noctalia
-# panel. A headless [[service]] reads output state from Sway or Hyprland,
-# owns the draft/live layout, and applies it; the bar widget and
+# panel. A headless [[service]] reads output state from Sway, Hyprland or
+# Niri, owns the draft/live layout, and applies it; the bar widget and
 # control-center shortcut are thin clients.
 
 id = "simply-sharat/monitor_layout"
 name = "Monitor Layout"
-version = "1.0.0"
+version = "1.1.0"
 plugin_api = 23
 author = "simply-sharat"
 license = "MIT"
-dependencies = ["swaymsg or hyprctl"]
+dependencies = ["swaymsg, hyprctl, or niri"]
 tags = ["display", "system", "utility"]
 icon = "device-desktop"
 description = "Arrange multiple displays and change their resolutions from a Noctalia panel."
@@ -25,6 +25,7 @@ options = [
   { value = "auto", label_key = "settings.backend.auto" },
   { value = "sway", label_key = "settings.backend.sway" },
   { value = "hyprland", label_key = "settings.backend.hyprland" },
+  { value = "niri", label_key = "settings.backend.niri" },
 ]
 
 [[setting]]
@@ -40,6 +41,13 @@ type = "string"
 label_key = "settings.hyprctl_command.label"
 description_key = "settings.hyprctl_command.description"
 default = "hyprctl"
+
+[[setting]]
+key = "niri_command"
+type = "string"
+label_key = "settings.niri_command.label"
+description_key = "settings.niri_command.description"
+default = "niri"
 
 [[setting]]
 key = "snap_to_grid"

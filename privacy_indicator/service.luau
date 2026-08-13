@@ -44,11 +44,13 @@ for dev in /sys/class/video4linux/video*; do [ -e "$dev/name" ] && grep -qv 'Met
 local SCREEN_PREFIXES = {
   "xdph-streaming", "gsr-default", "game capture", "screen",
   "desktop", "display", "cast", "webrtc", "v4l2",
+  "capture.capture", "screen-share", "screen share",
 }
 
 local SCREEN_SUBSTRINGS = {
   "screen-cast", "screen-capture", "desktop-capture",
   "monitor-capture", "window-capture", "game-capture",
+  "screencast", "screen-share", "screen share",
 }
 
 local function readConfig()
@@ -122,10 +124,13 @@ local function nodeAppName(info)
   return props["application.name"] or props["node.nickname"] or props["node.name"] or ""
 end
 
+-- pw-dump names these props "link.output.node" / "link.input.node"; older
+-- ports used the ".id"-suffixed spelling, so accept both.
 local function hasLink(nodeId, links)
   for _, link in ipairs(links) do
     local props = link.info and link.info.props or {}
-    if props["link.output.node.id"] == nodeId or props["link.input.node.id"] == nodeId then
+    if props["link.output.node"] == nodeId or props["link.input.node"] == nodeId
+      or props["link.output.node.id"] == nodeId or props["link.input.node.id"] == nodeId then
       return true
     end
   end
