@@ -147,20 +147,23 @@ local function outputList()
   local rows = {}
   for _, output in ipairs(outputs) do
     local selected = output.output_id == data.selected_id
-    table.insert(rows, ui.row({
+    local rowProps = {
       key = "output-" .. output.output_id,
       gap = 8,
       align = "center",
       paddingH = 10,
       paddingV = 8,
       radius = 8,
-      fill = selected and "primary/0.12" or "transparent",
       border = selected and "primary" or "outline",
       borderWidth = selected and 1 or 0,
       onClick = function()
         sendSelect(output.output_id)
       end,
-    }, {
+    }
+    if selected then
+      rowProps.fill = "primary/0.12"
+    end
+    table.insert(rows, ui.row(rowProps, {
       ui.box({ width = 6, height = 6, radius = 3, fill = output.active and "primary" or "outline" }),
       ui.label({
         text = output.name,
@@ -391,7 +394,7 @@ local function render()
         onClick = function() activeTab = "config"; render() end,
       }),
     }),
-    ui.scroll({ flexGrow = 1, fill = "transparent", gap = 8 }, content),
+    ui.scroll({ flexGrow = 1, gap = 8 }, content),
   }))
 end
 

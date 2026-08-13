@@ -310,7 +310,7 @@ local function pollPipeWire()
     return
   end
   pwBusy = true
-  noctalia.runAsync({ "pw-dump" }, function(result)
+  noctalia.runAsync("pw-dump", function(result)
     pwBusy = false
     if result.exitCode ~= 0 then
       if state.available or state.error == "" then
@@ -348,7 +348,7 @@ local function runCameraScan()
     return
   end
   cameraBusy = true
-  noctalia.runAsync({ "sh", "-c", CAMERA_SCRIPT }, function(result)
+  noctalia.runAsync(CAMERA_SCRIPT, function(result)
     cameraBusy = false
     if result.exitCode ~= 0 then
       state.cam_apps = {}

@@ -130,7 +130,7 @@ local function buildCommonModes(currentWidth, currentHeight, currentRefresh)
 end
 
 function M.buildFetchCommand(cmd)
-  return { cmd, "monitors", "-j" }
+  return cmd .. " monitors -j"
 end
 
 function M.parseOutputs(rawText)

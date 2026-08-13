@@ -34,8 +34,7 @@ Each plugin ships a `plugin.toml`, its entry scripts, a `README.md` and
 
 ## Requirements
 
-- Noctalia v5 (plugin API 26 for Air Quality, 24 for Monitor Layout and
-  Privacy Indicator).
+- Noctalia v5 (plugin API 23 for all three plugins).
 - Air Quality: an internet connection. Coordinates are resolved via IP
   (`auto_ip`, the default), custom lat/lon, or the shell's own `[location]`
   config when manual coordinates are set.

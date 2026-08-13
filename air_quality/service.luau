@@ -19,6 +19,50 @@ intervalSecs = math.max(5, math.min(3600, intervalSecs))
 -- Cached IP-geolocated coordinates, so auto_ip only hits ipapi.co once.
 local ipCoords = nil
 
+-- Read the shell's `[location]` table from its config files. This is a
+-- plugin_api 23 substitute for noctalia.getSetting("location.*") (API 26,
+-- unreleased). settings.toml overrides config.toml, mirroring the shell's
+-- effective-config merge. Both coordinates must be present for them to be
+-- used, matching the shell's rule that partial manual coordinates are ignored.
+local function parseLocationTable(text)
+  if text == nil then
+    return nil, nil
+  end
+  local inSection = false
+  local lat, lon
+  for line in string.gmatch(text, "[^\n]+") do
+    local trimmed = noctalia.string.trim(line)
+    if string.sub(trimmed, 1, 1) == "[" then
+      inSection = trimmed == "[location]"
+    elseif inSection and string.sub(trimmed, 1, 1) ~= "#" then
+      local key, value = string.match(trimmed, "^([%w_]+)%s*=%s*(.+)$")
+      if key ~= nil then
+        value = string.match(value, '^"([^"]*)"') or string.match(value, "^([%d%.%-]+)")
+        if key == "latitude" then
+          lat = tonumber(value)
+        elseif key == "longitude" then
+          lon = tonumber(value)
+        end
+      end
+    end
+  end
+  return lat, lon
+end
+
+local function readShellLocation()
+  local configHome = noctalia.getenv("XDG_CONFIG_HOME")
+  local base = (configHome ~= nil and configHome ~= "") and configHome or noctalia.expandPath("~/.config")
+  local lat, lon = parseLocationTable(noctalia.readFile(base .. "/noctalia/config.toml"))
+  local settingsLat, settingsLon = parseLocationTable(noctalia.readFile(base .. "/noctalia/settings.toml"))
+  if settingsLat ~= nil then
+    lat = settingsLat
+  end
+  if settingsLon ~= nil then
+    lon = settingsLon
+  end
+  return lat, lon
+end
+
 local current = {
   has_data = false,
   loading = false,
@@ -55,13 +99,12 @@ local function resolveCoords(cb)
     cb(lat, lon, "")
     return
   elseif locationMode == "shell" then
-    local lat = tonumber(noctalia.getSetting("location.latitude"))
-    local lon = tonumber(noctalia.getSetting("location.longitude"))
+    local lat, lon = readShellLocation()
     if lat == nil or lon == nil then
       cb(nil, nil, noctalia.tr("errors.shell_location"))
       return
     end
-    cb(tonumber(lat), tonumber(lon), "")
+    cb(lat, lon, "")
     return
   end
 
@@ -81,9 +124,9 @@ local function resolveCoords(cb)
       return
     end
     ipCoords = {
-      lat = tonumber(data.latitude),
-      lon = tonumber(data.longitude),
-      city = data.city or "",
+      lat = tonumber(parsed.latitude),
+      lon = tonumber(parsed.longitude),
+      city = parsed.city or "",
     }
     cb(ipCoords.lat, ipCoords.lon, "")
   end)

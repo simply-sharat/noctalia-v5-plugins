@@ -53,7 +53,7 @@ local function describeOutput(output)
 end
 
 function M.buildFetchCommand(cmd)
-  return { cmd, "-t", "get_outputs", "-r" }
+  return cmd .. " -t get_outputs -r"
 end
 
 function M.parseOutputs(rawText)

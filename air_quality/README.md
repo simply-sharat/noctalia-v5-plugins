@@ -33,6 +33,7 @@ set in the shell config.
 
 ## Requirements
 
-- Noctalia v5 (plugin API 26) — needs `noctalia.getSetting()` for the shell
-  location mode.
+- Noctalia v5 (plugin API 23) — the shell's `[location]` coordinates are
+  read from the Noctalia config files, so manual latitude/longitude in the
+  shell's location settings are honored.
 - An internet connection.

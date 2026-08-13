@@ -76,7 +76,7 @@ local function render()
   local aqi = currentAqi()
   local color = hasData and aqiColor(aqi, scale) or "on_surface_variant"
 
-  desktopWidget.render(ui.column({ gap = 8, align = "center", fill = "transparent" }, {
+  desktopWidget.render(ui.column({ gap = 8, align = "center" }, {
     ui.label({
       text = hasData and tostring(aqi) or "--",
       fontSize = 40,

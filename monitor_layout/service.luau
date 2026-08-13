@@ -232,9 +232,9 @@ local function refresh()
   end
 
   local command = state.backend == "sway" and config.swayCommand or config.hyprctlCommand
-  local argv = module.buildFetchCommand(command)
+  local fetchCommand = module.buildFetchCommand(command)
 
-  noctalia.runAsync(argv, function(result)
+  noctalia.runAsync(fetchCommand, function(result)
     if result.exitCode ~= 0 then
       state.is_refreshing = false
       state.error = result.stderr ~= "" and result.stderr or noctalia.tr("errors.fetch_failed")

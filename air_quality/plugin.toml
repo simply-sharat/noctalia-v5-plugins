@@ -7,7 +7,7 @@
 id = "simply-sharat/air_quality"
 name = "Air Quality"
 version = "1.0.0"
-plugin_api = 26
+plugin_api = 23
 author = "simply-sharat"
 license = "MIT"
 dependencies = []

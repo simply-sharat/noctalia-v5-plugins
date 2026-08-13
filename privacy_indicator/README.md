@@ -53,7 +53,7 @@ JavaScript regexes - `|` still separates alternatives, e.g.
 
 ## Requirements
 
-- Noctalia v5 (plugin API 24).
+- Noctalia v5 (plugin API 23).
 - PipeWire, with `pw-dump` on `PATH` (microphone and screen-sharing
   detection).
 - Read access to `/dev/video*` (camera detection).

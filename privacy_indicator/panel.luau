@@ -70,7 +70,7 @@ local function render()
       }),
     }),
     ui.separator({ spacing = 4 }),
-    ui.scroll({ flexGrow = 1, gap = 8, fill = "transparent" }, rows),
+    ui.scroll({ flexGrow = 1, gap = 8 }, rows),
   }))
 end
 

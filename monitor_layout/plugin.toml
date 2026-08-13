@@ -7,7 +7,7 @@
 id = "simply-sharat/monitor_layout"
 name = "Monitor Layout"
 version = "1.0.0"
-plugin_api = 24
+plugin_api = 23
 author = "simply-sharat"
 license = "MIT"
 dependencies = ["swaymsg or hyprctl"]

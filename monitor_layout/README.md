@@ -38,5 +38,5 @@ resolution/refresh presets; only the current mode is guaranteed to be valid.
 
 ## Requirements
 
-- Noctalia v5 (plugin API 24).
+- Noctalia v5 (plugin API 23).
 - Sway (`swaymsg`) or Hyprland (`hyprctl`), with the relevant session env vars.

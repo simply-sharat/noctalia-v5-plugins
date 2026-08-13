@@ -163,7 +163,7 @@ local function render()
       ui.button({ glyph = "settings", variant = "ghost", tooltip = noctalia.tr("panel.settings"), onClick = "onSettings" }),
       ui.button({ glyph = "close", variant = "ghost", tooltip = noctalia.tr("panel.close"), onClick = "onClose" }),
     }),
-    ui.scroll({ flexGrow = 1, fill = "transparent" }, content),
+    ui.scroll({ flexGrow = 1 }, content),
     ui.row({ gap = 10 }, {
       ui.button({ text = noctalia.tr("panel.refresh"), variant = "secondary", flexGrow = 1, onClick = "onRefresh" }),
       ui.button({ text = noctalia.tr("panel.settings"), flexGrow = 1, onClick = "onSettings" }),
