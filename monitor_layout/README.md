@@ -1,0 +1,42 @@
+# Monitor Layout
+
+Arrange multiple displays and change their resolutions from a Noctalia panel.
+Migrated from the legacy v4 plugin by Mathew-D.
+
+- **Service** (`service.luau`) reads the current display layout from Sway or
+  Hyprland (auto-detected), keeps a live + draft copy, and applies the draft as
+  a live script or exports it as a config-file snippet.
+- **Bar widget** opens the layout panel. The icon color is configurable.
+- **Control-center shortcut** toggles the layout panel.
+- **Panel** edits the layout: a proportional arrangement strip, a selectable
+  output list, and an inspector with resolution / position / scale controls.
+
+## Interaction change from v4
+
+The v4 panel let you drag displays around on a free-form canvas. Noctalia v5's
+declarative UI has no absolute-positioning canvas and its drag-and-drop is
+limited to list reordering, so the canvas was replaced with:
+
+- an **arrangement strip** — tiles scaled by each output's logical size,
+- a **position inspector** — numeric X/Y inputs (snapped to the grid size),
+- a **resolution picker** and **scale slider** per output.
+
+## Backends
+
+| Backend | Detect | Query | Apply |
+|---|---|---|---|
+| Sway | `swaymsg` on PATH | `swaymsg -t get_outputs -r` | `swaymsg output <name> enable pos … res … scale …` |
+| Hyprland | `hyprctl` on PATH | `hyprctl monitors -j` | `hyprctl keyword monitor NAME,RES,POS,SCALE` |
+
+Detection prefers the running session's environment (`SWAYSOCK` /
+`HYPRLAND_INSTANCE_SIGNATURE`) before falling back to PATH. The compositor can
+be forced under Settings → Plugins.
+
+Hyprland does not expose per-output mode lists over `hyprctl monitors -j`, so
+the resolution picker seeds the current mode plus a deduplicated set of common
+resolution/refresh presets; only the current mode is guaranteed to be valid.
+
+## Requirements
+
+- Noctalia v5 (plugin API 24).
+- Sway (`swaymsg`) or Hyprland (`hyprctl`), with the relevant session env vars.

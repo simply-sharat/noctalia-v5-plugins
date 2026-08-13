@@ -1,0 +1,111 @@
+# Air Quality - migrated from the legacy v4 plugin (adriamartin91).
+# Displays live air quality (US EPA AQI or European AQI) from Open-Meteo or
+# AQICN. A headless [[service]] fetches on an interval and publishes plain data
+# to noctalia.state; the bar widget, panel and desktop widget are thin UI
+# clients of that shared state.
+
+id = "simply-sharat/air_quality"
+name = "Air Quality"
+version = "1.0.0"
+plugin_api = 26
+author = "simply-sharat"
+license = "MIT"
+dependencies = []
+tags = ["weather", "health", "monitoring"]
+icon = "wind"
+description = "Live air quality (US or EU AQI) from Open-Meteo or AQICN."
+
+[[setting]]
+key = "data_source"
+type = "select"
+label_key = "settings.data_source.label"
+description_key = "settings.data_source.description"
+default = "open-meteo"
+options = [
+  { value = "open-meteo", label_key = "settings.data_source.open_meteo" },
+  { value = "aqicn", label_key = "settings.data_source.aqicn" },
+]
+
+[[setting]]
+key = "aqi_scale"
+type = "select"
+label_key = "settings.aqi_scale.label"
+description_key = "settings.aqi_scale.description"
+default = "us"
+options = [
+  { value = "us", label_key = "settings.aqi_scale.us" },
+  { value = "eu", label_key = "settings.aqi_scale.eu" },
+]
+
+[[setting]]
+key = "aqicn_token"
+type = "string"
+label_key = "settings.aqicn_token.label"
+description_key = "settings.aqicn_token.description"
+default = ""
+
+[[setting]]
+key = "location_mode"
+type = "select"
+label_key = "settings.location_mode.label"
+description_key = "settings.location_mode.description"
+default = "auto_ip"
+options = [
+  { value = "auto_ip", label_key = "settings.location_mode.auto_ip" },
+  { value = "custom", label_key = "settings.location_mode.custom" },
+  { value = "shell", label_key = "settings.location_mode.shell" },
+]
+
+[[setting]]
+key = "custom_latitude"
+type = "string"
+label_key = "settings.custom_latitude.label"
+description_key = "settings.custom_latitude.description"
+default = ""
+
+[[setting]]
+key = "custom_longitude"
+type = "string"
+label_key = "settings.custom_longitude.label"
+description_key = "settings.custom_longitude.description"
+default = ""
+
+[[setting]]
+key = "refresh_interval"
+type = "int"
+label_key = "settings.refresh_interval.label"
+description_key = "settings.refresh_interval.description"
+min = 5
+max = 3600
+default = 30
+
+[[setting]]
+key = "bold_text"
+type = "bool"
+label_key = "settings.bold_text.label"
+description_key = "settings.bold_text.description"
+default = true
+
+[[widget]]
+id = "bar"
+entry = "widget.luau"
+
+  [widget.actions]
+  middle = "none"
+
+[[panel]]
+id = "panel"
+entry = "panel.luau"
+width = 420
+height = 560
+placement = "attached"
+position = "auto"
+open_near_click = true
+
+[[desktop_widget]]
+id = "desktop"
+entry = "desktop.luau"
+
+[[service]]
+id = "service"
+entry = "service.luau"
