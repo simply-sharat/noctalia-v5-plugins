@@ -156,7 +156,7 @@ local function render()
     table.insert(content, ui.label({ text = message, fontSize = 14, color = "on_surface_variant", textAlign = "center", maxWidth = 320 }))
   end
 
-  panel.render(ui.column({ padding = 20, gap = 12, fill = "surface", radius = 14 }, {
+  panel.render(ui.column({ flexGrow = 1, gap = 12 }, {
     ui.row({ align = "center", gap = 6 }, {
       ui.label({ text = noctalia.tr("panel.title"), fontSize = 16, fontWeight = "bold", color = "on_surface", flexGrow = 1 }),
       ui.button({ glyph = "refresh", variant = "ghost", tooltip = noctalia.tr("panel.refresh"), onClick = "onRefresh" }),

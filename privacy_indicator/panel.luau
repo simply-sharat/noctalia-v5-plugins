@@ -58,7 +58,7 @@ local function render()
     end
   end
 
-  panel.render(ui.column({ padding = 16, gap = 10, fill = "surface", radius = 14 }, {
+  panel.render(ui.column({ flexGrow = 1, gap = 10 }, {
     ui.row({ align = "center", gap = 8 }, {
       ui.glyph({ name = "shield-check", color = "primary" }),
       ui.label({ text = noctalia.tr("history.title"), fontSize = 16, fontWeight = "bold", color = "on_surface", flexGrow = 1 }),
