@@ -31,3 +31,17 @@ icon = "device-desktop"
 description = "Arrange multiple displays and change their resolutions from a Noctalia panel."
 plugin_api = 24
 tags = ["display", "system", "utility"]
+
+[[plugin]]
+id = "simply-sharat/privacy_indicator"
+name = "Privacy Indicator"
+version = "1.0.0"
+updated_at = 1786665600
+added_at = 1786665600
+author = "simply-sharat"
+license = "MIT"
+icon = "shield-check"
+description = "Shows when microphone, camera or screen sharing is active, with an access history panel."
+plugin_api = 24
+tags = ["bar", "privacy", "indicator"]
+dependencies = ["pw-dump"]
