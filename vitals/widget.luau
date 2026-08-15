@@ -72,7 +72,7 @@ local function metricRow(category, text, width, color, fixedWidth)
     props.color = color
   end
   row[#row + 1] = ui.label(props)
-  return ui.row({ gap = 4, align = "center" }, row)
+  return ui.row({ gap = 2, align = "center" }, row)
 end
 
 local function render()
@@ -114,7 +114,7 @@ local function render()
     end
   end
 
-  barWidget.render(container({ gap = 6, align = "center" }, children))
+  barWidget.render(container({ gap = 2, align = "center" }, children))
 end
 
 local function renderTooltip()
