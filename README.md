@@ -17,6 +17,7 @@ Or, for local development, drop the plugin folder under
 | Plugin | id | Entries |
 |---|---|---|
 | [Air Quality](./air_quality/README.md) | `simply-sharat/air_quality` | service, widget, panel, desktop widget |
+| [BudsLink](./budslink/README.md) | `simply-sharat/budslink` | service, widget, panel |
 | [Monique](./monique/README.md) | `simply-sharat/monique` | service, widget, panel |
 | [Privacy Indicator](./privacy_indicator/README.md) | `simply-sharat/privacy_indicator` | service, widget, panel |
 | [Vitals](./vitals/README.md) | `simply-sharat/vitals` | service, widget, panel |
@@ -26,6 +27,7 @@ Or, for local development, drop the plugin folder under
 ```
 catalog.toml       index of every plugin in this repo
 air_quality/       air quality service + bar widget + panel + desktop widget
+budslink/          BudsLink earbud service + bar widget + controls panel
 monique/           monitor-profile service + bar widget + profile panel
 privacy_indicator/ capture-detection service + bar widget + access-history panel
 vitals/            system monitor service + bar widget + details panel
@@ -40,8 +42,9 @@ Each plugin ships a `plugin.toml`, its entry scripts, a `README.md` and
 - Air Quality: an internet connection. Coordinates are resolved via IP
   (`auto_ip`, the default), custom lat/lon, or the shell's own `[location]`
   config when manual coordinates are set.
-- Monitor Layout: Sway (`swaymsg`), Hyprland (`hyprctl`), or Niri (`niri`)
-  with the backend auto-detected from the session environment.
+- BudsLink: `gjs` on `PATH` and the BudsLink app with its D-Bus service
+  (`io.github.maniacx.BudsLink`).
+- Monique: the `monique` CLI on `PATH`.
 - Privacy Indicator: PipeWire with `pw-dump` on `PATH` (microphone and
   screen-sharing detection) and read access to `/dev/video*` (camera
   detection).
