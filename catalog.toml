@@ -20,6 +20,20 @@ plugin_api = 23
 tags = ["weather", "health", "monitoring"]
 
 [[plugin]]
+id = "simply-sharat/budslink"
+name = "BudsLink"
+version = "1.0.0"
+updated_at = 1786797839
+added_at = 1786797839
+author = "simply-sharat"
+license = "MIT"
+icon = "headphones"
+description = "Earbud battery, noise control and equalizer controls for the BudsLink service."
+plugin_api = 23
+tags = ["bar", "audio", "bluetooth", "system"]
+dependencies = ["gjs"]
+
+[[plugin]]
 id = "simply-sharat/monique"
 name = "Monique"
 version = "1.0.0"

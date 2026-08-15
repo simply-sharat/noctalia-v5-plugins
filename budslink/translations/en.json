@@ -1,0 +1,22 @@
+{
+  "settings.update_interval.label": "Update interval (ms)",
+  "settings.update_interval.description": "How often the bar refreshes earbud state from the BudsLink helper.",
+  "settings.show_battery_text.label": "Show battery text",
+  "settings.show_battery_text.description": "Display the battery percentage next to the headphones icon in the bar.",
+  "settings.low_battery_threshold.label": "Low battery threshold",
+  "settings.low_battery_threshold.description": "Battery at or below this percentage is highlighted as low.",
+  "settings.active_color.label": "Active color",
+  "settings.active_color.description": "Color used for the headphones icon in the bar.",
+  "widget.tooltip_disconnected": "BudsLink\nNo device connected",
+  "battery.left": "Left",
+  "battery.right": "Right",
+  "battery.case": "Case",
+  "battery.total": "Battery",
+  "battery.charging": "charging",
+  "panel.title": "BudsLink",
+  "panel.no_device": "Make sure BudsLink is running and your earbuds are connected.",
+  "panel.no_battery": "Battery not reported",
+  "panel.open_app": "Open BudsLink",
+  "panel.refresh": "Refresh",
+  "panel.close": "Close"
+}

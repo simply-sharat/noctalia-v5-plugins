@@ -1,0 +1,68 @@
+# BudsLink - earbud battery and controls in the bar.
+# A headless [[service]] keeps the GJS helper daemon alive (it watches the
+# BudsLink D-Bus service, mirrors device state and holds the service open via
+# its HoldService heartbeat) and publishes "budslink.data"; the bar widget and
+# panel are thin UI clients that send actions back through "budslink.cmd".
+
+id = "simply-sharat/budslink"
+name = "BudsLink"
+version = "1.0.0"
+plugin_api = 23
+author = "simply-sharat"
+license = "MIT"
+dependencies = ["gjs"]
+tags = ["bar", "audio", "bluetooth", "system"]
+icon = "headphones"
+description = "Earbud battery, noise control and equalizer controls for the BudsLink service."
+
+[[setting]]
+key = "update_interval"
+type = "int"
+label_key = "settings.update_interval.label"
+description_key = "settings.update_interval.description"
+min = 1000
+max = 10000
+default = 2000
+
+[[setting]]
+key = "show_battery_text"
+type = "bool"
+label_key = "settings.show_battery_text.label"
+description_key = "settings.show_battery_text.description"
+default = true
+
+[[setting]]
+key = "low_battery_threshold"
+type = "int"
+label_key = "settings.low_battery_threshold.label"
+description_key = "settings.low_battery_threshold.description"
+min = 5
+max = 50
+default = 20
+
+[[setting]]
+key = "active_color"
+type = "color"
+label_key = "settings.active_color.label"
+description_key = "settings.active_color.description"
+default = "primary"
+
+[[widget]]
+id = "bar"
+entry = "widget.luau"
+
+  [widget.actions]
+  middle = "none"
+
+[[panel]]
+id = "panel"
+entry = "panel.luau"
+width = 360
+height = 540
+placement = "attached"
+position = "auto"
+open_near_click = true
+
+[[service]]
+id = "service"
+entry = "service.luau"
